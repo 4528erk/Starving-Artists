@@ -1,0 +1,600 @@
+-- Gui to Lua
+-- Version: 3.2
+
+-- Instances:
+
+local UI = Instance.new("ScreenGui")
+local UI_2 = Instance.new("Frame")
+local Container = Instance.new("Frame")
+local UnderLine = Instance.new("Frame")
+local Window = Instance.new("TextLabel")
+local TextButton = Instance.new("TextButton")
+local TextButton_Roundify_12px = Instance.new("ImageLabel")
+local TextButton_2 = Instance.new("TextButton")
+local TextButton_Roundify_12px_2 = Instance.new("ImageLabel")
+
+--Properties:
+
+UI.Name = "UI"
+UI.Parent = game.CoreGui
+
+UI_2.Name = "UI"
+UI_2.Parent = UI
+UI_2.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+UI_2.BorderSizePixel = 0
+UI_2.Position = UDim2.new(0, 591, 0, 181)
+UI_2.Size = UDim2.new(0, 190, 0, 26)
+
+Container.Name = "Container"
+Container.Parent = UI_2
+Container.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+Container.BorderSizePixel = 0
+Container.Position = UDim2.new(0, 0, 1, 0)
+Container.Size = UDim2.new(0, 190, 0, 183)
+
+UnderLine.Name = "UnderLine"
+UnderLine.Parent = UI_2
+UnderLine.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+UnderLine.BorderSizePixel = 0
+UnderLine.Position = UDim2.new(0, 0, 1, -1)
+UnderLine.Size = UDim2.new(1, 0, 0, 1)
+
+Window.Name = "Window"
+Window.Parent = UI_2
+Window.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Window.BackgroundTransparency = 1.000
+Window.Size = UDim2.new(1, 0, 1, 0)
+Window.Font = Enum.Font.SourceSans
+Window.Text = "✂️ Starving  artists ✂️"
+Window.TextColor3 = Color3.fromRGB(255, 0, 4)
+Window.TextSize = 17.000
+
+TextButton.Parent = UI_2
+TextButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TextButton.BackgroundTransparency = 1.000
+TextButton.BorderSizePixel = 0
+TextButton.Position = UDim2.new(0.189473689, 0, 2.53846169, 0)
+TextButton.Size = UDim2.new(0, 118, 0, 50)
+TextButton.ZIndex = 500
+TextButton.Font = Enum.Font.SourceSans
+TextButton.Text = "Steal Art"
+TextButton.TextColor3 = Color3.fromRGB(255, 0, 0)
+TextButton.TextSize = 14.000
+TextButton.TextWrapped = true
+TextButton.MouseButton1Down:connect(function()
+	local collectionService = game:GetService("CollectionService")
+
+	local player = game.Players.LocalPlayer
+
+	_G.refreshing = true
+
+	local cloneGui = {}
+
+
+
+	function cloneGui.buildRoot()
+
+		local paintFrame = player.PlayerGui.MainGui.PaintFrame
+
+		local cloneFrame = paintFrame:Clone()
+
+
+
+		-- Initialize root frame.
+
+		cloneFrame.Name = 'CloneFrame'
+
+		cloneFrame.Parent = paintFrame
+
+		cloneFrame.ToolsFrame:Destroy()
+
+		cloneFrame.ColorFrame:Destroy()
+
+		cloneFrame.NextButton:Destroy()
+
+		cloneFrame.UIAspectRatioConstraint:Destroy()
+
+		cloneFrame.Grid:Destroy()
+
+		cloneFrame.Confirmation:Destroy()
+
+		cloneFrame.AnchorPoint = Vector2.new(0, 0.5)
+
+		cloneFrame.Position = UDim2.new(1, 10, 0.5, 0)
+
+		cloneFrame.Size = UDim2.new(0.5, 0, 1, 0)
+
+		cloneFrame.Visible = true
+
+
+
+		paintFrame.Position = UDim2.new(0.5, -((cloneFrame.AbsoluteSize.X / 2) + 5), 0.5, 0)
+
+
+
+		cloneGui.root = cloneFrame
+
+	end
+
+
+
+	function cloneGui.buildButtons()
+
+		local nextButton = player.PlayerGui.MainGui.PaintFrame.NextButton
+
+		local copyButton = nextButton:Clone()
+
+		local cloneButton = nextButton:Clone()
+
+		local buttonSize = UDim2.new(0.4, 0, 0.09, 0)
+
+
+
+		-- Initialize copy button.
+
+		copyButton.Parent = cloneGui.root
+
+		copyButton.Size = buttonSize
+
+		copyButton.Position = UDim2.new(0.28, 0, 0.895)
+
+		copyButton.Label.Text = 'COPY'
+
+		copyButton.Name = 'CopyButton'
+
+
+
+		-- Initialize clone button.
+
+		cloneButton.Parent = cloneGui.root
+
+		cloneButton.Size = buttonSize
+
+		cloneButton.Position = UDim2.new(0.72, 0, 0.895)
+
+		cloneButton.Label.Text = 'CLONE'
+
+		cloneButton.Name = 'CloneButton'
+
+
+
+		-- Animation functions.
+
+		for i, button in pairs({cloneButton, copyButton}) do
+
+			button.MouseEnter:Connect(function()
+
+				button:TweenSize(UDim2.new(buttonSize.X.Scale + 0.015, 0, buttonSize.Y.Scale + 0.015, 0), 'Out', 'Quad', 0.2, true)
+
+			end)
+
+
+
+			button.MouseLeave:Connect(function()
+
+				button:TweenSize(buttonSize, 'Out', 'Quad', 0.2, true)
+
+			end)
+
+		end
+
+
+
+		-- Button actions.
+
+		copyButton.MouseButton1Click:Connect(copyGrid)
+
+
+
+		cloneButton.MouseButton1Click:Connect(cloneGrid)
+
+	end
+
+
+
+	function cloneGui.buildScrollingFrame()
+
+		local scrollingFrame = Instance.new('ScrollingFrame')
+
+		local uiListLayout = Instance.new('UIListLayout')
+
+		local uiPadding = Instance.new('UIPadding')
+
+
+
+		-- Initialize scrolling frame.
+
+		scrollingFrame.Parent = cloneGui.root
+
+		scrollingFrame.AnchorPoint = Vector2.new(0.5, 0)
+
+		scrollingFrame.Position = UDim2.new(0.5, 0, 0.05, 0)
+
+		scrollingFrame.Size = UDim2.new(0.8, 0, 0.75, 0)
+
+		scrollingFrame.BackgroundTransparency = 1
+
+		scrollingFrame.BorderSizePixel = 0
+
+		scrollingFrame.ScrollBarImageColor3 = Color3.new((210 / 255), (76 / 255), (71 / 255))
+
+		scrollingFrame.ScrollBarThickness = 4
+
+		scrollingFrame.ZIndex = 3
+
+
+
+		-- Configure layout.
+
+		uiListLayout.Parent = scrollingFrame
+
+		uiListLayout.Padding = UDim.new(0, 10)
+
+		uiPadding.Parent = scrollingFrame
+
+		uiPadding.PaddingLeft = UDim.new(0.08, 0)
+
+		uiPadding.PaddingRight = UDim.new(0.08, 0)
+
+		uiPadding.PaddingTop = UDim.new(0, 5)
+
+
+
+		uiListLayout.Changed:Connect(function()
+
+			scrollingFrame.CanvasSize = UDim2.new(0, 0, 0, uiListLayout.AbsoluteContentSize.Y + 10)
+
+		end)
+
+
+
+		cloneGui.scrollingFrame = scrollingFrame
+
+	end
+
+
+
+	function cloneGui.addGrid(grid)
+
+		local UIStroke = player.PlayerGui.MainGui.PaintFrame.Grid.UIStroke:Clone()
+
+		local container = Instance.new('Frame')
+
+		local preview = grid:Clone()
+
+
+
+		-- Initialize new container.
+
+		container.Parent = cloneGui.scrollingFrame
+
+		container.Size = UDim2.new(1, 0, 1, 0)
+
+		container.SizeConstraint = Enum.SizeConstraint.RelativeXX
+
+		container.BackgroundTransparency = 0.8
+
+		container.ZIndex = 4
+
+		UIStroke.Thickness = 4.5
+
+		UIStroke.Parent = container
+
+		UIStroke.Enabled = false
+
+
+
+		-- Clone grid into container.
+
+		preview.Parent = container
+
+
+
+		if (cloneGui.selected == nil) then
+
+			cloneGui.selected = container
+
+			UIStroke.Enabled = true
+
+		end
+
+
+
+		container.InputBegan:Connect(function(userInput)
+
+			if (userInput.UserInputType == Enum.UserInputType.MouseButton1) then
+
+				cloneGui.selected.UIStroke.Enabled = false
+
+				UIStroke.Enabled = true
+
+				cloneGui.selected = container
+
+			end
+
+		end)
+
+	end
+
+
+
+	function copyGrid()
+
+		if (cloneGui.selected ~= nil) then
+
+			local target = cloneGui.selected.Grid
+
+			local destination = player.PlayerGui.MainGui.PaintFrame.Grid
+
+
+
+			for i = 1, 1024 do
+
+				destination[i].BackgroundColor3 = target[i].BackgroundColor3
+
+			end
+
+		end
+
+	end
+
+
+
+	function cloneGrid()
+
+		local remote = game.ReplicatedStorage.Remotes.CreateArt
+
+		local frameColor = "ffffff"
+
+		local frame = "Starter Frame"
+
+		local name = "a"
+
+		local cells = {}
+
+
+
+		local grid = cloneGui.selected.Grid
+
+		for i = 1, 1024 do
+
+			cells[i] = grid[i].BackgroundColor3:ToHex()
+
+		end
+
+
+
+		local payload = {}
+
+		payload["FrameColor"] = frameColor
+
+		payload["Frame"] = frame
+
+		payload["Name"] = name
+
+		payload["Cells"] = cells
+
+
+
+		remote:InvokeServer(payload)
+
+	end
+
+
+
+	function refreshGrids()
+
+		local objects = game.Workspace.Plots:GetDescendants()
+
+		for i, v in ipairs(objects) do
+
+			if (v.Name == 'Grid' and v.ClassName == 'Frame' and not collectionService:HasTag(v, 'cloned')) then
+
+				if (#v:GetChildren() == 1027) then
+
+					collectionService:AddTag(v, 'cloned')
+
+					cloneGui.addGrid(v)
+
+				end
+
+			end
+
+		end
+
+	end
+
+
+
+	cloneGui.buildRoot()
+
+	cloneGui.buildButtons()
+
+	cloneGui.buildScrollingFrame()
+
+
+
+	while (_G.refreshing) do
+
+		refreshGrids()
+
+		wait(0.1)
+
+	end
+end)
+
+TextButton_Roundify_12px.Name = "TextButton_Roundify_12px"
+TextButton_Roundify_12px.Parent = TextButton
+TextButton_Roundify_12px.Active = true
+TextButton_Roundify_12px.AnchorPoint = Vector2.new(0.5, 0.5)
+TextButton_Roundify_12px.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TextButton_Roundify_12px.BackgroundTransparency = 1.000
+TextButton_Roundify_12px.Position = UDim2.new(0.5, 0, 0.5, 0)
+TextButton_Roundify_12px.Selectable = true
+TextButton_Roundify_12px.Size = UDim2.new(1, 0, 1, 0)
+TextButton_Roundify_12px.Image = "rbxassetid://3570695787"
+TextButton_Roundify_12px.ImageTransparency = 0.500
+TextButton_Roundify_12px.ScaleType = Enum.ScaleType.Slice
+TextButton_Roundify_12px.SliceCenter = Rect.new(100, 100, 100, 100)
+TextButton_Roundify_12px.SliceScale = 0.120
+
+TextButton_2.Parent = UI_2
+TextButton_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TextButton_2.BackgroundTransparency = 1.000
+TextButton_2.BorderSizePixel = 0
+TextButton_2.Position = UDim2.new(0.189473689, 0, 5.03846169, 0)
+TextButton_2.Size = UDim2.new(0, 118, 0, 50)
+TextButton_2.ZIndex = 500
+TextButton_2.Font = Enum.Font.SourceSans
+TextButton_2.Text = "Fly"
+TextButton_2.TextColor3 = Color3.fromRGB(255, 0, 0)
+TextButton_2.TextSize = 14.000
+TextButton_2.TextWrapped = true
+TextButton_2.MouseButton1Down:connect(function()
+	repeat wait()
+	until game.Players.LocalPlayer and game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:findFirstChild("Torso") and game.Players.LocalPlayer.Character:findFirstChild("Humanoid")
+	local mouse = game.Players.LocalPlayer:GetMouse()
+	repeat wait() until mouse
+	local plr = game.Players.LocalPlayer
+	local torso = plr.Character.Torso
+	local flying = true
+	local deb = true
+	local ctrl = {f = 0, b = 0, l = 0, r = 0}
+	local lastctrl = {f = 0, b = 0, l = 0, r = 0}
+	local maxspeed = 50
+	local speed = 0
+
+	function Fly()
+		local bg = Instance.new("BodyGyro", torso)
+		bg.P = 9e4
+		bg.maxTorque = Vector3.new(9e9, 9e9, 9e9)
+		bg.cframe = torso.CFrame
+		local bv = Instance.new("BodyVelocity", torso)
+		bv.velocity = Vector3.new(0,0.1,0)
+		bv.maxForce = Vector3.new(9e9, 9e9, 9e9)
+		repeat wait()
+			plr.Character.Humanoid.PlatformStand = true
+			if ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0 then
+				speed = speed+.5+(speed/maxspeed)
+				if speed > maxspeed then
+					speed = maxspeed
+				end
+			elseif not (ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0) and speed ~= 0 then
+				speed = speed-1
+				if speed < 0 then
+					speed = 0
+				end
+			end
+			if (ctrl.l + ctrl.r) ~= 0 or (ctrl.f + ctrl.b) ~= 0 then
+				bv.velocity = ((game.Workspace.CurrentCamera.CoordinateFrame.lookVector * (ctrl.f+ctrl.b)) + ((game.Workspace.CurrentCamera.CoordinateFrame * CFrame.new(ctrl.l+ctrl.r,(ctrl.f+ctrl.b)*.2,0).p) - game.Workspace.CurrentCamera.CoordinateFrame.p))*speed
+				lastctrl = {f = ctrl.f, b = ctrl.b, l = ctrl.l, r = ctrl.r}
+			elseif (ctrl.l + ctrl.r) == 0 and (ctrl.f + ctrl.b) == 0 and speed ~= 0 then
+				bv.velocity = ((game.Workspace.CurrentCamera.CoordinateFrame.lookVector * (lastctrl.f+lastctrl.b)) + ((game.Workspace.CurrentCamera.CoordinateFrame * CFrame.new(lastctrl.l+lastctrl.r,(lastctrl.f+lastctrl.b)*.2,0).p) - game.Workspace.CurrentCamera.CoordinateFrame.p))*speed
+			else
+				bv.velocity = Vector3.new(0,0.1,0)
+			end
+			bg.cframe = game.Workspace.CurrentCamera.CoordinateFrame * CFrame.Angles(-math.rad((ctrl.f+ctrl.b)*50*speed/maxspeed),0,0)
+		until not flying
+		ctrl = {f = 0, b = 0, l = 0, r = 0}
+		lastctrl = {f = 0, b = 0, l = 0, r = 0}
+		speed = 0
+		bg:Destroy()
+		bv:Destroy()
+		plr.Character.Humanoid.PlatformStand = false
+	end
+	mouse.KeyDown:connect(function(key)
+		if key:lower() == "e" then
+			if flying then flying = false
+			else
+				flying = true
+				Fly()
+			end
+		elseif key:lower() == "w" then
+			ctrl.f = 1
+		elseif key:lower() == "s" then
+			ctrl.b = -1
+		elseif key:lower() == "a" then
+			ctrl.l = -1
+		elseif key:lower() == "d" then
+			ctrl.r = 1
+		end
+	end)
+	mouse.KeyUp:connect(function(key)
+		if key:lower() == "w" then
+			ctrl.f = 0
+		elseif key:lower() == "s" then
+			ctrl.b = 0
+		elseif key:lower() == "a" then
+			ctrl.l = 0
+		elseif key:lower() == "d" then
+			ctrl.r = 0
+		end
+	end)
+	Fly()
+end)
+
+TextButton_Roundify_12px_2.Name = "TextButton_Roundify_12px"
+TextButton_Roundify_12px_2.Parent = TextButton_2
+TextButton_Roundify_12px_2.Active = true
+TextButton_Roundify_12px_2.AnchorPoint = Vector2.new(0.5, 0.5)
+TextButton_Roundify_12px_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TextButton_Roundify_12px_2.BackgroundTransparency = 1.000
+TextButton_Roundify_12px_2.Position = UDim2.new(0.5, 0, 0.5, 0)
+TextButton_Roundify_12px_2.Selectable = true
+TextButton_Roundify_12px_2.Size = UDim2.new(1, 0, 1, 0)
+TextButton_Roundify_12px_2.Image = "rbxassetid://3570695787"
+TextButton_Roundify_12px_2.ImageTransparency = 0.500
+TextButton_Roundify_12px_2.ScaleType = Enum.ScaleType.Slice
+TextButton_Roundify_12px_2.SliceCenter = Rect.new(100, 100, 100, 100)
+TextButton_Roundify_12px_2.SliceScale = 0.120
+
+-- Scripts:
+
+local function DPAHEBN_fake_script() -- UI_2.LocalScript 
+	local script = Instance.new('LocalScript', UI_2)
+
+	local dragger = {}; 
+	local resizer = {};
+	
+	do
+		local mouse = game:GetService("Players").LocalPlayer:GetMouse();
+		local inputService = game:GetService('UserInputService');
+		local heartbeat = game:GetService("RunService").Heartbeat;
+		-- // credits to Ririchi / Inori for this cute drag function :)
+		function dragger.new(frame)
+		    local s, event = pcall(function()
+		    	return frame.MouseEnter
+		    end)
+	
+		    if s then
+		    	frame.Active = true;
+	
+		    	event:connect(function()
+		    		local input = frame.InputBegan:connect(function(key)
+		    			if key.UserInputType == Enum.UserInputType.MouseButton1 then
+		    				local objectPosition = Vector2.new(mouse.X - frame.AbsolutePosition.X, mouse.Y - frame.AbsolutePosition.Y);
+		    				while heartbeat:wait() and inputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) do
+		    					frame:TweenPosition(UDim2.new(0, mouse.X - objectPosition.X + (frame.Size.X.Offset * frame.AnchorPoint.X), 0, mouse.Y - objectPosition.Y + (frame.Size.Y.Offset * frame.AnchorPoint.Y)), 'Out', 'Quad', 0.1, true);
+		    				end
+		    			end
+		    		end)
+	
+		    		local leave;
+		    		leave = frame.MouseLeave:connect(function()
+		    			input:disconnect();
+		    			leave:disconnect();
+		    		end)
+		    	end)
+		    end
+		end
+		
+		function resizer.new(p, s)
+			p:GetPropertyChangedSignal('AbsoluteSize'):connect(function()
+				s.Size = UDim2.new(s.Size.X.Scale, s.Size.X.Offset, s.Size.Y.Scale, p.AbsoluteSize.Y);
+			end)
+		end
+	end
+	script.Parent.Active = true
+	script.Parent.Draggable = true
+end
+coroutine.wrap(DPAHEBN_fake_script)()
